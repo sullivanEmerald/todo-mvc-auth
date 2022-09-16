@@ -4,9 +4,9 @@ const Todo = require('../model/todos')
 module.exports = {
     getPost :  async (req, res) => {
         try {
-            const item =  await Todo.find().sort({ _id : -1})
-            const remainItem  = await Todo.countDocuments({ completed : false})
-            res.render('todos.ejs', { item , remainItem})
+            const item =  await Todo.find({userId : req.user.id})
+            const remainItem  = await Todo.countDocuments({userId : req.user.id,  completed : false})
+            res.render('todos.ejs', { item , remainItem, userId : req.user})
         } catch (error) {
           console.error(error)  
         }
@@ -16,7 +16,8 @@ module.exports = {
         try {
           await Todo.create({
             task : req.body.task,
-            completed : false
+            completed : false,
+            userId : req.user.id
           })
           
           console.log('item added to the database')
